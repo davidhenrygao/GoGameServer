@@ -19,5 +19,6 @@ func main() {
 		fmt.Println("Usage: program -cfgfile/-f filepath.\n")
 		return
 	}
-	loadConfig(cfgFile)
+	iCfg := loadConfig(cfgFile)
+	fmt.Printf("iCfg = %+v\n", iCfg)
 }

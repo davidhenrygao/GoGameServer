@@ -18,63 +18,58 @@ type initCfg struct {
 }
 
 type loadField struct {
-	fName   string
-	fType   string
-	fDefult interface{} //Can't be omitted if is nil.
+	name   string
+	defult interface{} //Can't be omitted if is nil.
 }
 
 //Must match the fields in the struct initCfg.
 var cfgMap = map[string]loadField{
-	"Id":          {"id", "int", nil},
-	"Ip":          {"ip", "string", "127.0.0.1"},
-	"Port":        {"port", "int", nil},
-	"LogDir":      {"log,dir", "string", "./log/"},
-	"LogFileName": {"log,filename", "string", "server"},
-	"LogLevel":    {"log,level", "string", "error"},
-	"Logstderr":   {"log,stderr", "bool", false},
+	"Id":          {"id", nil},
+	"Ip":          {"ip", "127.0.0.1"},
+	"Port":        {"port", nil},
+	"LogDir":      {"log,dir", "./log/"},
+	"LogFileName": {"log,filename", "server"},
+	"LogLevel":    {"log,level", "error"},
+	"Logstderr":   {"log,stderr", false},
 }
 
-func loadConfig(file string) {
+func loadConfig(file string) initCfg {
 	err := config.LoadCfgFile(cfgFile)
 	if err != nil {
-		fmt.Printf("Load configure file error: %+v\n", err)
-		return
+		panic(fmt.Sprintf("Load configure file error: %+v\n", err))
 	}
 	cfg := config.Cfg
 	var iCfg initCfg
+	t := reflect.TypeOf(iCfg)
+	v := reflect.ValueOf(&iCfg).Elem()
+	nf := t.NumField()
 	var val interface{}
-	for name, field := range cfgMap {
-		switch field.fType {
-		case "int":
-			val, err = cfg.Int(field.fName)
-		case "bool":
-			val, err = cfg.Bool(field.fName)
-		case "string":
-			val, err = cfg.Value(field.fName)
+	for i := 0; i < nf; i++ {
+		f := t.Field(i)
+		name := f.Name
+		loadf, ok := cfgMap[name]
+		if !ok {
+			panic(fmt.Sprintf("Miss load field(%s) in the cfgMap.", name))
+		}
+		kind := f.Type.Kind()
+		switch kind {
+		case reflect.Bool:
+			val, err = cfg.Bool(loadf.name)
+		case reflect.Int:
+			val, err = cfg.Int(loadf.name)
+		case reflect.String:
+			val, err = cfg.Value(loadf.name)
 		default:
-			panic(fmt.Sprintf("Unknown cfgMap loadField fType: %s.", field.fType))
+			panic(fmt.Sprintf("Unsupported configure type: %s.", kind.String()))
 		}
 		if err != nil {
-			fmt.Printf("%+v\n", err)
-			if field.fDefult == nil {
+			if loadf.defult == nil {
 				panic(fmt.Sprintf("%+v\n", err))
 			} else {
-				val = field.fDefult
+				val = loadf.defult
 			}
 		}
-		v := reflect.ValueOf(&iCfg).Elem().FieldByName(name)
-		switch field.fType {
-		case "int":
-			i := val.(int)
-			v.SetInt(int64(i))
-		case "bool":
-			b := val.(bool)
-			v.SetBool(b)
-		case "string":
-			s := val.(string)
-			v.SetString(s)
-		default:
-		}
+		v.FieldByName(name).Set(reflect.ValueOf(val))
 	}
-	fmt.Printf("iCfg = %+v\n", iCfg)
+	return iCfg
 }
