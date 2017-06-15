@@ -16,9 +16,10 @@ func init() {
 func main() {
 	flag.Parse()
 	if cfgFile == "" {
-		fmt.Println("Usage: program -cfgfile/-f filepath.\n")
+		fmt.Println("Usage: program -f filepath.\n")
 		return
 	}
-	iCfg := loadConfig(cfgFile)
-	fmt.Printf("iCfg = %+v\n", iCfg)
+	initCfg := loadConfig(cfgFile)
+	fmt.Printf("initCfg = %+v\n", initCfg)
+	initServer(initCfg)
 }
