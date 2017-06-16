@@ -73,43 +73,43 @@ func GetLogger() *Logger {
 }
 
 func (l *Logger) Debug(format string, args ...interface{}) {
-	l.file.Debugf(format, args)
+	l.file.Debugf(format, args...)
 	if l.logConsoleFlag {
-		logrus.Debugf(format, args)
+		logrus.Debugf(format, args...)
 	}
 }
 func (l *Logger) Info(format string, args ...interface{}) {
-	l.file.Infof(format, args)
+	l.file.Infof(format, args...)
 	if l.logConsoleFlag {
-		logrus.Infof(format, args)
+		logrus.Infof(format, args...)
 	}
 }
 func (l *Logger) Warn(format string, args ...interface{}) {
 
-	l.file.Warnf(format, args)
+	l.file.Warnf(format, args...)
 	if l.logConsoleFlag {
-		logrus.Warnf(format, args)
+		logrus.Warnf(format, args...)
 	}
 }
 func (l *Logger) Error(format string, args ...interface{}) {
 
-	l.file.Errorf(format, args)
+	l.file.Errorf(format, args...)
 	if l.logConsoleFlag {
-		logrus.Errorf(format, args)
+		logrus.Errorf(format, args...)
 	}
 }
 func (l *Logger) Fatal(format string, args ...interface{}) {
 
-	l.file.Fatalf(format, args)
+	l.file.Fatalf(format, args...)
 	if l.logConsoleFlag {
-		logrus.Fatalf(format, args)
+		logrus.Fatalf(format, args...)
 	}
 }
 func (l *Logger) Panic(format string, args ...interface{}) {
 
-	l.file.Panicf(format, args)
+	l.file.Panicf(format, args...)
 	if l.logConsoleFlag {
-		logrus.Panicf(format, args)
+		logrus.Panicf(format, args...)
 	}
 }
 func (l *Logger) SetLogLevel(lvStr string) error {

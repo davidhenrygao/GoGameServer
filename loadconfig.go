@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/davidhenrygao/GoGameServer/utils/config"
+	"github.com/davidhenrygao/GoGameServer/module/config"
 	"reflect"
 )
 
